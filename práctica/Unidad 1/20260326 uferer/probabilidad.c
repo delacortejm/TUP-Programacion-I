@@ -9,17 +9,39 @@ sale determinado número de un dado.*/
 
 int main()
 {
-    int seca, cara, total_tiradas0;
-    float frecRelCara;
-    int contador = 1;
+    int total_tiros, contador, resultado;
+    int cara = 0, seca=0;
+    float frecCara, frecSeca;
 
-    printf("Ingrese la cantidad de cantidad de tiros: ");
-    scanf_s("%d", &contador);
+    srand(time(NULL));
+
+    printf("Ingrese la cantidad de tiros: ");
+    scanf_s("%d", &total_tiros);
+
     //bucle while
-    while (contador <= count_tiros) {
-        printf("Número %d\n", return rand() % caras + 1;);
+    contador = 1;
+    while (contador <= total_tiros) {
+        resultado = rand() % 2+1;
+
+        if(resultado==1)
+        {
+            cara=cara+1;
+        }
+        else 
+        {
+            seca=seca+1;
+        }
         contador++; // Importante: actualiza la variable para evitar bucles infinitos
     }
+    //casteo de int a float para no perder decimales
+    frecCara = (float)cara/total_tiros * 100;
+    frecSeca = (float)seca/total_tiros * 100;
+
+    printf("\nResultados de %d tiros: \n", total_tiros);
+    printf("Caras: %d - frecuencia relativa: %.2f \n", cara,frecCara);
+    printf("Secas: %d - frecuencia relativa: %.2f\n", seca, frecSeca);
+
+    return 0;
 } 
 
 /*si yo tengo un int y lo quiero castear a float, pero al reves hay problemas...
