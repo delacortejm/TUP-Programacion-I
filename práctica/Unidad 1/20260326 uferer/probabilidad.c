@@ -21,3 +21,7 @@ int main()
         contador++; // Importante: actualiza la variable para evitar bucles infinitos
     }
 } 
+
+/*si yo tengo un int y lo quiero castear a float, pero al reves hay problemas...
+yo puedo parsear hacia arriba
+si yo parseo un float a un entero pierdo datos*/
