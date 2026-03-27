@@ -9,14 +9,12 @@ sale determinado número de un dado.*/
 
 int main()
 {
-    int caras = 1;
-    int count_tiros = 0;
+    int seca, cara, total_tiradas0;
+    float frecRelCara;
     int contador = 1;
 
-    printf("Ingrese la cantidad de caras tiene su dado: ");
-    scanf_s("%d", &caras);
-    printf("Ingrese la cantidad de tiros que quiere: ");
-    scanf_s("%d", &count_tiros);
+    printf("Ingrese la cantidad de cantidad de tiros: ");
+    scanf_s("%d", &contador);
     //bucle while
     while (contador <= count_tiros) {
         printf("Número %d\n", return rand() % caras + 1;);
