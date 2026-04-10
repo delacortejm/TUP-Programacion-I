@@ -7,10 +7,11 @@ int main()
     char *ptr = strchr(palabra, 'u');
     
     printf("La palabra es: %s\n", palabra);
+    printf("PTR es: %p\n", (void*)ptr);
 
     if (ptr != NULL)
     {
-        printf("Encontrado: %c en la posición %ld\n", *ptr, ptr - palabra);
+        printf("Encontrado: %c en la posicion %ld\n", *ptr, ptr - palabra);
     }
     else
     {
