@@ -1,26 +1,48 @@
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <time.h>
+
+// int main() {
+//     int n, u;
+
+//     srand(time(0));
+//     n = (rand() % 10) + 1;
+
+//     do {
+//         printf("Ingresa un numero entre 1 y 10: ");
+//         scanf("%d", &u);
+
+//         if (u < n) {
+//             printf("El numero es mas grande\n");
+//         } else if (u > n) {
+//             printf("El numero es mas chico\n");
+//         }
+
+//     } while (u != n);
+
+//     printf("Adivinaste! El numero era %d\n", n);
+
+//     return 0;
+// }
+
+//ejercicio 2
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
 int main() {
-    int n, u;
+    int i;
+    int n;
 
-    srand(time(0));
-    n = (rand() % 10) + 1;
+    printf("Ingrese numero del 1 al 10\n");
+    scanf("%d", &n);
 
-    do {
-        printf("Ingresa un numero entre 1 y 10: ");
-        scanf("%d", &u);
-
-        if (u < n) {
-            printf("El numero es mas grande\n");
-        } else if (u > n) {
-            printf("El numero es mas chico\n");
+    if (n < 1 || n > 10) {
+        printf("Error: el numero debe estar entre 1 y 10\n");
+    } else {
+        for (i = 1; i <= n; i++) {
+            printf("%d %d ", i, -i);
         }
-
-    } while (u != n);
-
-    printf("Adivinaste! El numero era %d\n", n);
+        printf("\n");
+    }
 
     return 0;
 }
