@@ -1,0 +1,91 @@
+1. Void
+void = "nada". Se usa en funciones que no devuelven nada (solo hacen algo, no te dan un resultado).
+cvoid saludar() {       // no devuelve nada
+    printf("Hola\n");
+}
+
+int sumar(int a, int b) {  // devuelve un int
+    return a + b;
+}
+Regla: si la función tiene return valor; → no es void. Si solo "hace cosas" (imprime, modifica) → void.
+2. Método burbuja (ordenamiento)
+Compara pares vecinos y los intercambia si están en orden incorrecto. Repite hasta que quede ordenado.
+cvoid burbuja(int v[], int n) {
+    int aux;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (v[j] > v[j + 1]) {   // > para ascendente
+                aux = v[j];
+                v[j] = v[j + 1];
+                v[j + 1] = aux;
+            }
+        }
+    }
+}
+La clave es el swap con auxiliar (esas 3 líneas). Si te piden descendente, cambiás > por <.
+3. Matrices (arreglo 2D)
+Una tabla de filas × columnas. Se recorre con dos for anidados.
+cint m[3][3];
+
+// Cargar
+for (int i = 0; i < 3; i++)        // filas
+    for (int j = 0; j < 3; j++)    // columnas
+        scanf("%d", &m[i][j]);
+
+// Mostrar
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++)
+        printf("%d ", m[i][j]);
+    printf("\n");   // salto de línea al terminar la fila
+}
+i = fila, j = columna. Casi siempre es ese doble for.
+4. Struct
+Agrupa varios datos distintos bajo un mismo nombre (como una "ficha").
+cstruct Alumno {
+    char nombre[30];
+    int edad;
+    float nota;
+};
+
+struct Alumno a;
+strcpy(a.nombre, "Juan");  // strings se copian con strcpy
+a.edad = 19;
+a.nota = 8.5;
+
+printf("%s tiene %d\n", a.nombre, a.edad);  // accedés con el punto .
+La clave: se accede a cada campo con punto (a.edad, a.nota).
+Un arreglo de structs (lo más común en parciales):
+cstruct Alumno curso[40];
+curso[0].edad = 19;
+curso[1].nota = 7.0;
+5. Búsqueda
+Lineal (recorrer hasta encontrar):
+cint buscar(int v[], int n, int x) {
+    for (int i = 0; i < n; i++)
+        if (v[i] == x)
+            return i;       // devuelve la posición
+    return -1;              // -1 = no encontrado
+}
+El return -1 es la convención de "no está".
+6. Ordenamiento con doble dato
+Esto es lo que más confunde: ordenás un arreglo pero arrastrás otro dato junto. Si movés uno, movés los dos en paralelo.
+Ejemplo: ordenar notas pero que los nombres sigan a su nota.
+cvoid ordenar(int nota[], char nombre[][30], int n) {
+    int auxN;
+    char auxNom[30];
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (nota[j] > nota[j + 1]) {
+                // swap de la nota
+                auxN = nota[j];
+                nota[j] = nota[j + 1];
+                nota[j + 1] = auxN;
+                // MISMO swap del nombre, en paralelo
+                strcpy(auxNom, nombre[j]);
+                strcpy(nombre[j], nombre[j + 1]);
+                strcpy(nombre[j + 1], auxNom);
+            }
+        }
+    }
+}
+La idea central: un solo if decide, y dentro hacés el swap de los dos arreglos juntos. Si en vez de nombres son dos structs o dos arreglos de int, es lo mismo: swap doble dentro del mismo if.

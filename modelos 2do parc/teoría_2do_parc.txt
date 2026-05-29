@@ -1,0 +1,262 @@
+# Teórico Programación I — Apunte de consulta
+
+> Lenguaje: C (GCC / MinGW). Apunte de repaso rápido para el parcial.
+
+---
+
+## 1. Funciones
+
+**Qué es:** un bloque de código con nombre que realiza una tarea. Se define una vez y se puede llamar (usar) las veces que haga falta.
+
+**Para qué se usa:** evitar repetir código, dividir el programa en partes más chicas y ordenadas, y reutilizar lógica.
+
+**Sintaxis:**
+```c
+tipo_de_retorno nombre(parametros) {
+    // cuerpo
+    return valor;   // si el tipo no es void
+}
+```
+
+Tres partes a tener claras:
+- **Tipo de retorno:** qué devuelve (`int`, `float`, `char`, `void`...).
+- **Parámetros:** los datos que recibe entre paréntesis.
+- **return:** el resultado que manda de vuelta a quien la llamó.
+
+**Ejemplo:**
+```c
+int sumar(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    int r = sumar(3, 5);   // llamada → r vale 8
+    printf("%d", r);
+}
+```
+
+---
+
+## 2. Void
+
+**Qué es:** `void` significa "nada / vacío". Indica que la función **no devuelve** ningún valor.
+
+**Para qué se usa:** en funciones que solo *hacen algo* (imprimir, cargar, modificar un arreglo) pero no entregan un resultado.
+
+**Regla rápida:**
+- Si la función tiene `return valor;` → NO es void.
+- Si solo ejecuta acciones y no devuelve nada → es `void`.
+
+**Ejemplo:**
+```c
+void saludar() {
+    printf("Hola\n");   // hace algo, no devuelve nada
+}
+```
+
+---
+
+## 3. Paso de arreglos a funciones (importante)
+
+**Concepto clave:** cuando pasás un arreglo a una función, NO se hace una copia. La función trabaja sobre el **arreglo original**, así que cualquier cambio queda hecho afuera.
+
+**Por eso:**
+- Ordenamiento → es `void`: no devuelve nada, **modifica** el arreglo recibido.
+- Búsqueda → es `int`: **devuelve** una posición (un número).
+
+**Ejemplo:**
+```c
+void burbuja(int v[], int n) {   // modifica v directamente
+    // ...
+}
+
+int main() {
+    int v[5] = {3,1,2,5,4};
+    burbuja(v, 5);   // después de esto, v YA quedó ordenado
+}
+```
+
+Esta diferencia (**modifica** vs **devuelve**) conecta funciones, void, ordenamiento y búsqueda.
+
+---
+
+## 4. Método burbuja (ordenamiento)
+
+**Qué es:** algoritmo que ordena un arreglo comparando **pares de elementos vecinos** e intercambiándolos si están en el orden incorrecto. Repite las pasadas hasta dejarlo ordenado.
+
+**Para qué se usa:** ordenar datos de menor a mayor (ascendente) o de mayor a menor (descendente).
+
+**El swap (intercambio) con variable auxiliar** — patrón que hay que memorizar:
+```c
+aux = v[j];
+v[j] = v[j + 1];
+v[j + 1] = aux;
+```
+
+**Código completo:**
+```c
+void burbuja(int v[], int n) {
+    int aux;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (v[j] > v[j + 1]) {   // > = ascendente | < = descendente
+                aux = v[j];
+                v[j] = v[j + 1];
+                v[j + 1] = aux;
+            }
+        }
+    }
+}
+```
+
+- For externo (`i`): cuenta las pasadas.
+- For interno (`j`): compara vecinos.
+- El `-i` evita re-comparar lo que ya quedó ordenado al final.
+
+---
+
+## 5. Ordenamiento con doble dato
+
+**Qué es:** ordenar un arreglo **arrastrando un segundo dato en paralelo**. Si movés un elemento, movés también su dato asociado, para que no se "desemparejen".
+
+**Para qué se usa:** ej. ordenar notas pero que cada nombre siga a su nota correspondiente.
+
+**Idea central:** un solo `if` decide; dentro hacés el swap de los **dos** arreglos juntos.
+
+**Ejemplo (notas + nombres):**
+```c
+void ordenar(int nota[], char nombre[][30], int n) {
+    int auxN;
+    char auxNom[30];
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (nota[j] > nota[j + 1]) {
+                // swap de la nota
+                auxN = nota[j];
+                nota[j] = nota[j + 1];
+                nota[j + 1] = auxN;
+                // MISMO swap del nombre (en paralelo)
+                strcpy(auxNom, nombre[j]);
+                strcpy(nombre[j], nombre[j + 1]);
+                strcpy(nombre[j + 1], auxNom);
+            }
+        }
+    }
+}
+```
+
+> Si los dos datos son `int`, el swap del segundo se hace con `aux` normal (no `strcpy`). `strcpy` solo se usa para strings.
+
+---
+
+## 6. Búsqueda
+
+### Búsqueda lineal
+**Qué es:** recorrer el arreglo elemento por elemento hasta encontrar el buscado.
+**Para qué se usa:** sirve siempre, esté ordenado o no.
+
+```c
+int buscar(int v[], int n, int x) {
+    for (int i = 0; i < n; i++)
+        if (v[i] == x)
+            return i;     // devuelve la posición encontrada
+    return -1;            // -1 = no encontrado (convención)
+}
+```
+
+### Búsqueda binaria (solo si el arreglo está ordenado)
+**Qué es:** divide el arreglo a la mitad en cada paso, descartando la mitad donde no puede estar. Mucho más rápida, pero **requiere arreglo ordenado**.
+
+```c
+int binaria(int v[], int n, int x) {
+    int ini = 0, fin = n - 1, medio;
+    while (ini <= fin) {
+        medio = (ini + fin) / 2;
+        if (v[medio] == x)      return medio;
+        else if (v[medio] < x)  ini = medio + 1;
+        else                    fin = medio - 1;
+    }
+    return -1;
+}
+```
+
+---
+
+## 7. Matrices (arreglos de 2 dimensiones)
+
+**Qué es:** una tabla de datos organizada en **filas y columnas**.
+
+**Para qué se usa:** representar datos en cuadrícula (tablas, mapas, etc.).
+
+**Declaración:** `int m[filas][columnas];`
+
+**Recorrido:** siempre con **dos `for` anidados** (`i` = fila, `j` = columna).
+
+```c
+int m[3][3];
+
+// Cargar
+for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++)
+        scanf("%d", &m[i][j]);
+
+// Mostrar
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++)
+        printf("%d ", m[i][j]);
+    printf("\n");   // salto de línea al terminar cada fila
+}
+```
+
+---
+
+## 8. Struct (estructura)
+
+**Qué es:** un tipo de dato que **agrupa varios datos distintos** bajo un mismo nombre (como una "ficha" o "registro").
+
+**Para qué se usa:** representar un objeto con varias propiedades (un alumno con nombre, edad y nota).
+
+**Definición y uso:**
+```c
+struct Alumno {
+    char nombre[30];
+    int edad;
+    float nota;
+};
+
+struct Alumno a;
+strcpy(a.nombre, "Juan");   // los strings se copian con strcpy
+a.edad = 19;
+a.nota = 8.5;
+
+printf("%s - %d\n", a.nombre, a.edad);   // se accede con punto .
+```
+
+**Clave:** a cada campo se accede con **punto** → `a.edad`, `a.nota`.
+
+**Arreglo de structs** (muy común en parciales):
+```c
+struct Alumno curso[40];
+curso[0].edad = 19;
+curso[1].nota = 7.0;
+
+// recorrer
+for (int i = 0; i < cant; i++)
+    printf("%s\n", curso[i].nombre);
+```
+
+---
+
+## Resumen express
+
+| Tema | Para qué sirve | Detalle clave |
+|------|----------------|---------------|
+| Funciones | Reutilizar y ordenar código | tipo + parámetros + return |
+| void | Función que no devuelve nada | sin `return valor` |
+| Paso de arreglos | Modificar el original | ordenar = void, buscar = int |
+| Burbuja | Ordenar | swap con `aux`; `>` asc / `<` desc |
+| Doble dato | Ordenar arrastrando otro dato | un solo `if`, swap doble |
+| Búsqueda lineal | Buscar siempre | `return -1` si no está |
+| Búsqueda binaria | Buscar rápido | requiere ordenado |
+| Matrices | Tabla filas × columnas | doble for `i`/`j` |
+| Struct | Agrupar datos distintos | acceso con punto `.` |
