@@ -1,5 +1,4 @@
-# Cheatsheet de Programación I — Examen
-
+# Preparación de 3er examen de Programación I 
 > Referencia rápida para usar durante el examen.
 > Estilo: C estándar con `conio.h`, `getch()`, `gets()`. Variables y comentarios en español.
 > **Alineado al estilo de los apuntes de cátedra.**
