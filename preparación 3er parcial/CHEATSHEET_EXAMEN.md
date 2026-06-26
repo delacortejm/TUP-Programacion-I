@@ -2,6 +2,7 @@
 
 > Referencia rápida para usar durante el examen.
 > Estilo: C estándar con `conio.h`, `getch()`, `gets()`. Variables y comentarios en español.
+> **Alineado al estilo de los apuntes de cátedra.**
 
 ---
 
@@ -10,15 +11,19 @@
 1. [Errores típicos de sintaxis (LEER PRIMERO)](#1-errores-típicos-de-sintaxis)
 2. [Búsqueda lineal](#2-búsqueda-lineal)
 3. [Búsqueda binaria](#3-búsqueda-binaria)
-4. [Ordenamiento - Bubble Sort (burbuja)](#4-ordenamiento---bubble-sort)
+4. [Ordenamiento - Bubble Sort](#4-ordenamiento---bubble-sort)
 5. [Ordenamiento - Selección](#5-ordenamiento---selección)
 6. [Ordenamiento - Inserción](#6-ordenamiento---inserción)
-7. [Recursividad](#7-recursividad)
-8. [Punteros y malloc (lo mínimo)](#8-punteros-y-malloc)
-9. [Listas enlazadas simples](#9-listas-enlazadas-simples)
-10. [Listas doblemente enlazadas](#10-listas-doblemente-enlazadas)
-11. [Árboles binarios (BST/ABB)](#11-árboles-binarios)
-12. [Plantilla base de programa](#12-plantilla-base)
+7. [Funciones y modularización](#7-funciones-y-modularización)
+8. [Variables y parámetros](#8-variables-y-parámetros)
+9. [Recursividad](#9-recursividad)
+10. [Punteros y malloc](#10-punteros-y-malloc)
+11. [Listas enlazadas simples](#11-listas-enlazadas-simples)
+12. [Listas doblemente enlazadas](#12-listas-doblemente-enlazadas)
+13. [Pilas (LIFO)](#13-pilas-lifo)
+14. [Colas (FIFO)](#14-colas-fifo)
+15. [Árboles binarios (BST/ABB)](#15-árboles-binarios)
+16. [Plantilla base de programa](#16-plantilla-base)
 
 ---
 
@@ -47,38 +52,18 @@
 
 ## 2. Búsqueda lineal
 
-**Idea:** Recorrer el arreglo de principio a fin comparando cada elemento.
-
 ```c
-#include <stdio.h>
-#include <conio.h>
-#define TAM 5
-
-int main()
+int posicion = -1;
+for(i = 0; i < TAM; i++)
 {
-    int arr[TAM] = {10, 25, 7, 42, 18};
-    int i, buscado;
-    int posicion = -1;  // marcador de "no encontrado"
-
-    printf("Ingrese numero a buscar: ");
-    scanf("%d", &buscado);
-
-    for(i = 0; i < TAM; i++)
-    {
-        if(arr[i] == buscado)
-        {
-            posicion = i;
-        }
-    }
-
-    if(posicion == -1)
-        printf("No encontrado");
-    else
-        printf("Encontrado en posicion %d", posicion);
-
-    getch();
-    return 0;
+    if(arr[i] == buscado)
+        posicion = i;
 }
+
+if(posicion == -1)
+    printf("No encontrado");
+else
+    printf("Encontrado en posicion %d", posicion);
 ```
 
 **Variante con while (corta cuando lo encuentra):**
@@ -100,16 +85,11 @@ while(i < TAM && posicion == -1)
 
 **REQUISITO:** el arreglo TIENE que estar ordenado.
 
-**Idea:** Mirar el medio, descartar la mitad, repetir.
-
 ```c
 int izq = 0;
 int der = TAM - 1;
 int medio;
 int posicion = -1;
-int buscado;
-
-scanf("%d", &buscado);
 
 while(izq <= der && posicion == -1)
 {
@@ -118,59 +98,36 @@ while(izq <= der && posicion == -1)
     if(arr[medio] == buscado)
         posicion = medio;
     else if(buscado < arr[medio])
-        der = medio - 1;   // buscar en mitad izquierda
+        der = medio - 1;
     else
-        izq = medio + 1;   // buscar en mitad derecha
+        izq = medio + 1;
 }
-
-if(posicion == -1)
-    printf("No encontrado");
-else
-    printf("Encontrado en posicion %d", posicion);
 ```
 
 ---
 
 ## 4. Ordenamiento - Bubble Sort
 
-**Idea:** Comparar pares de elementos vecinos. Si están desordenados, intercambiar. Repetir hasta que esté ordenado.
+**Idea:** Comparar pares de elementos vecinos. Si están desordenados, intercambiar.
 
 ```c
-#include <stdio.h>
-#include <conio.h>
-#define TAM 5
+int i, j, aux;
 
-int main()
+for(i = 0; i < TAM - 1; i++)
 {
-    int arr[TAM] = {30, 10, 50, 20, 40};
-    int i, j, aux;
-
-    // BUBBLE SORT (de menor a mayor)
-    for(i = 0; i < TAM - 1; i++)
+    for(j = 0; j < TAM - 1 - i; j++)
     {
-        for(j = 0; j < TAM - 1 - i; j++)
+        if(arr[j] > arr[j + 1])
         {
-            if(arr[j] > arr[j + 1])  // si esta desordenado, intercambio
-            {
-                aux = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = aux;
-            }
+            aux = arr[j];
+            arr[j] = arr[j + 1];
+            arr[j + 1] = aux;
         }
     }
-
-    // Mostrar
-    for(i = 0; i < TAM; i++)
-        printf("%d ", arr[i]);
-
-    getch();
-    return 0;
 }
 ```
 
-**Para ordenar de MAYOR a menor:** cambiar `>` por `<` en el if.
-
-**Patrón de intercambio (memorizar):**
+**Patrón de intercambio:**
 ```c
 aux = a;
 a = b;
@@ -181,23 +138,17 @@ b = aux;
 
 ## 5. Ordenamiento - Selección
 
-**Idea:** Buscar el mínimo de lo que queda y ponerlo al principio.
-
 ```c
 int i, j, posMin, aux;
 
 for(i = 0; i < TAM - 1; i++)
 {
-    posMin = i;  // supongo que el actual es el menor
-
-    // Busco el menor desde i+1 hasta el final
+    posMin = i;
     for(j = i + 1; j < TAM; j++)
     {
         if(arr[j] < arr[posMin])
             posMin = j;
     }
-
-    // Intercambio el menor con la posicion i
     if(posMin != i)
     {
         aux = arr[i];
@@ -211,34 +162,191 @@ for(i = 0; i < TAM - 1; i++)
 
 ## 6. Ordenamiento - Inserción
 
-**Idea:** Como ordenar cartas en la mano. Cada elemento se "inserta" en el lugar correcto entre los anteriores.
-
 ```c
 int i, j, actual;
 
 for(i = 1; i < TAM; i++)
 {
-    actual = arr[i];   // el elemento que voy a insertar
+    actual = arr[i];
     j = i - 1;
-
-    // Corro hacia la derecha los mayores que "actual"
     while(j >= 0 && arr[j] > actual)
     {
         arr[j + 1] = arr[j];
         j--;
     }
-
-    arr[j + 1] = actual;  // inserto en su lugar
+    arr[j + 1] = actual;
 }
 ```
 
 ---
 
-## 7. Recursividad
+## 7. Funciones y modularización
 
-**Reglas:** Toda función recursiva tiene:
+**Modularizar** = dividir el programa en partes pequeñas con responsabilidad clara.
+
+### Diferencia conceptual (importante para teoría)
+
+- **Función:** subprograma que **devuelve un resultado**.
+- **Procedimiento:** subprograma que **realiza una acción** (no devuelve valor útil).
+- **En C:** todo se expresa con funciones. Los "procedimientos" se escriben con retorno `void`.
+
+### Estructura general
+
+```c
+tipo_retorno nombre(parametros)
+{
+    instrucciones;
+    return valor;   // si tiene retorno
+}
+```
+
+### Función que devuelve valor
+
+```c
+int sumar(int a, int b)
+{
+    return a + b;
+}
+```
+
+### "Procedimiento" (void, sin retorno)
+
+```c
+void mostrarSaludo()
+{
+    printf("Hola\n");
+}
+```
+
+### Ejemplo completo
+
+```c
+#include <stdio.h>
+
+int sumar(int a, int b)
+{
+    return a + b;
+}
+
+void mostrarResultado(int resultado)
+{
+    printf("El resultado es %d\n", resultado);
+}
+
+int main()
+{
+    int total = sumar(5, 3);
+    mostrarResultado(total);
+    return 0;
+}
+```
+
+### Función que recibe un arreglo
+
+```c
+// Al pasar un arreglo: corchetes [] sin tamaño, y se pasa el tamaño aparte
+float calcularPromedio(int arr[], int tam)
+{
+    int i, suma = 0;
+    for(i = 0; i < tam; i++)
+        suma = suma + arr[i];
+    return (float)suma / tam;
+}
+
+// Uso en main:
+// float prom = calcularPromedio(numeros, TAM);
+```
+
+---
+
+## 8. Variables y parámetros
+
+### Variables locales vs globales
+
+- **Local:** declarada dentro de una función. Solo existe ahí.
+- **Global:** declarada fuera de todas las funciones. Visible para todo el programa.
+
+```c
+int contador = 0;   // GLOBAL
+
+void aumentar()
+{
+    contador = contador + 1;   // accede a la global
+}
+
+void saludar()
+{
+    int veces = 1;   // LOCAL: solo existe acá
+    printf("Hola %d\n", veces);
+}
+```
+
+**Recomendación:** preferí variables locales salvo razón clara para compartir.
+
+### Parámetros nominales vs efectivos
+
+- **Nominales:** los que aparecen en la **definición** de la función.
+- **Efectivos:** los valores reales que se pasan en la **invocación**.
+
+```c
+int sumar(int a, int b) { ... }   // a y b son NOMINALES
+sumar(5, 3);                       // 5 y 3 son EFECTIVOS
+```
+
+### Pasaje por VALOR (default en C)
+
+La función recibe una **copia**. Si la modifica, el original NO cambia.
+
+```c
+void cambiar(int x)
+{
+    x = 100;   // modifica la copia, no el original
+}
+
+int main()
+{
+    int numero = 5;
+    cambiar(numero);
+    printf("%d", numero);   // imprime 5 (NO cambió)
+    return 0;
+}
+```
+
+### Pasaje por REFERENCIA (con punteros)
+
+La función recibe la **dirección** del original. Sí puede modificarlo.
+
+```c
+void cambiar(int *x)
+{
+    *x = 100;   // modifica el original a traves del puntero
+}
+
+int main()
+{
+    int numero = 5;
+    cambiar(&numero);          // paso la direccion
+    printf("%d", numero);      // imprime 100 (SÍ cambió)
+    return 0;
+}
+```
+
+**Resumen rápido:**
+
+| Pasaje | Recibe | ¿Modifica original? |
+|---|---|---|
+| Por valor | copia | No |
+| Por referencia (puntero) | dirección | Sí |
+
+---
+
+## 9. Recursividad
+
+### Reglas obligatorias
+
+Toda función recursiva tiene:
 1. **Caso base** → condición de salida (sin esto se cuelga).
-2. **Caso recursivo** → se llama a sí misma con un parámetro **más chico**.
+2. **Caso recursivo (paso recursivo)** → se llama a sí misma con un parámetro **más chico**.
 
 ### Factorial: n! = n × (n-1)!
 
@@ -273,7 +381,7 @@ int sumaHasta(int n)
 }
 ```
 
-### Fibonacci (n-ésimo término)
+### Fibonacci
 
 ```c
 int fibonacci(int n)
@@ -284,7 +392,7 @@ int fibonacci(int n)
 }
 ```
 
-### Contar dígitos de un número
+### Contar dígitos
 
 ```c
 int contarDigitos(int n)
@@ -306,9 +414,30 @@ tipo funcionRecursiva(parametros)
 }
 ```
 
+### 📚 Teoría (por si te preguntan)
+
+**Call Stack (Pila de llamadas):**
+- Cada vez que se llama una función, se apila un "marco de pila" en memoria con sus variables locales y parámetros.
+- Cuando la función termina, ese marco se desapila.
+- En recursión, se van apilando muchos marcos hasta llegar al caso base, y después se desapilan resolviendo de adentro hacia afuera.
+
+**Stack Overflow (desbordamiento de pila):**
+- Si te olvidás del caso base, la función se llama infinitamente.
+- Se llena la memoria de la pila → el programa CRASHEA con error fatal.
+- Solución: SIEMPRE tener un caso base bien definido.
+
+**Recursividad vs Iteración:**
+
+| Criterio | Recursividad | Iteración (for/while) |
+|---|---|---|
+| Memoria | Más (consume el Call Stack) | Menos (constante) |
+| Velocidad | Más lenta | Más rápida |
+| Código | Más elegante en estructuras jerárquicas | Más directo en problemas lineales |
+| Cuándo usar | Árboles, divide y vencerás | Recorrer arreglos, acumular, contar |
+
 ---
 
-## 8. Punteros y malloc
+## 10. Punteros y malloc
 
 ### Símbolos clave
 
@@ -327,13 +456,6 @@ tipo funcionRecursiva(parametros)
 
 struct Nodo *nuevo;
 nuevo = (struct Nodo*) malloc(sizeof(struct Nodo));
-
-// Verificar que no haya fallado
-if(nuevo == NULL)
-{
-    printf("Error de memoria");
-    return -1;
-}
 ```
 
 ### Regla `.` vs `->`
@@ -343,7 +465,7 @@ if(nuevo == NULL)
 
 ---
 
-## 9. Listas enlazadas simples
+## 11. Listas enlazadas simples
 
 ### Definición del nodo
 
@@ -355,8 +477,20 @@ if(nuevo == NULL)
 struct Nodo
 {
     int dato;
-    struct Nodo *siguiente;  // puntero al siguiente nodo
+    struct Nodo *siguiente;
 };
+```
+
+### Función auxiliar para crear un nodo
+
+```c
+struct Nodo* crearNodo(int valor)
+{
+    struct Nodo *nuevo = (struct Nodo*) malloc(sizeof(struct Nodo));
+    nuevo->dato = valor;
+    nuevo->siguiente = NULL;
+    return nuevo;
+}
 ```
 
 ### Insertar al INICIO
@@ -364,14 +498,11 @@ struct Nodo
 ```c
 struct Nodo* insertarInicio(struct Nodo *lista, int valor)
 {
-    struct Nodo *nuevo = (struct Nodo*) malloc(sizeof(struct Nodo));
-    nuevo->dato = valor;
-    nuevo->siguiente = lista;  // el nuevo apunta a lo que era antes el inicio
-    return nuevo;              // ahora el nuevo es el inicio
+    struct Nodo *nuevo = crearNodo(valor);
+    nuevo->siguiente = lista;
+    return nuevo;
 }
-
-// Uso:
-// lista = insertarInicio(lista, 5);
+// Uso: lista = insertarInicio(lista, 5);
 ```
 
 ### Insertar al FINAL
@@ -379,25 +510,21 @@ struct Nodo* insertarInicio(struct Nodo *lista, int valor)
 ```c
 struct Nodo* insertarFinal(struct Nodo *lista, int valor)
 {
-    struct Nodo *nuevo = (struct Nodo*) malloc(sizeof(struct Nodo));
-    nuevo->dato = valor;
-    nuevo->siguiente = NULL;
+    struct Nodo *nuevo = crearNodo(valor);
 
-    // Si la lista esta vacia, el nuevo es el inicio
     if(lista == NULL)
         return nuevo;
 
-    // Si no, recorro hasta el ultimo nodo
     struct Nodo *aux = lista;
     while(aux->siguiente != NULL)
         aux = aux->siguiente;
 
-    aux->siguiente = nuevo;  // el ultimo apunta al nuevo
+    aux->siguiente = nuevo;
     return lista;
 }
 ```
 
-### Mostrar la lista
+### Recorrer / Mostrar
 
 ```c
 void mostrarLista(struct Nodo *lista)
@@ -421,10 +548,10 @@ int buscar(struct Nodo *lista, int valor)
     while(aux != NULL)
     {
         if(aux->dato == valor)
-            return 1;   // encontrado
+            return 1;
         aux = aux->siguiente;
     }
-    return 0;  // no encontrado
+    return 0;
 }
 ```
 
@@ -433,22 +560,20 @@ int buscar(struct Nodo *lista, int valor)
 ```c
 struct Nodo* eliminar(struct Nodo *lista, int valor)
 {
-    struct Nodo *aux = lista;
-    struct Nodo *anterior = NULL;
-
-    // Caso especial: la lista esta vacia
     if(lista == NULL)
         return NULL;
 
     // Caso especial: eliminar el primero
     if(lista->dato == valor)
     {
-        aux = lista->siguiente;
+        struct Nodo *aux = lista->siguiente;
         free(lista);
         return aux;
     }
 
-    // Buscar el nodo a eliminar
+    struct Nodo *aux = lista;
+    struct Nodo *anterior = NULL;
+
     while(aux != NULL && aux->dato != valor)
     {
         anterior = aux;
@@ -481,38 +606,11 @@ int contar(struct Nodo *lista)
 }
 ```
 
-### Main de ejemplo
-
-```c
-int main()
-{
-    struct Nodo *lista = NULL;  // lista vacia
-
-    lista = insertarFinal(lista, 10);
-    lista = insertarFinal(lista, 20);
-    lista = insertarFinal(lista, 30);
-    lista = insertarInicio(lista, 5);
-
-    mostrarLista(lista);  // imprime: 5 -> 10 -> 20 -> 30 -> NULL
-
-    if(buscar(lista, 20))
-        printf("20 esta en la lista\n");
-
-    lista = eliminar(lista, 20);
-    mostrarLista(lista);  // imprime: 5 -> 10 -> 30 -> NULL
-
-    printf("Cantidad: %d", contar(lista));
-
-    getch();
-    return 0;
-}
-```
-
 ---
 
-## 10. Listas doblemente enlazadas
+## 12. Listas doblemente enlazadas
 
-**Diferencia:** Cada nodo tiene punteros a **siguiente** Y **anterior**. Se puede recorrer en ambas direcciones.
+**Diferencia:** Cada nodo tiene punteros a **siguiente** Y **anterior**.
 
 ### Definición del nodo
 
@@ -525,18 +623,29 @@ struct NodoD
 };
 ```
 
+### Función auxiliar
+
+```c
+struct NodoD* crearNodoD(int valor)
+{
+    struct NodoD *nuevo = (struct NodoD*) malloc(sizeof(struct NodoD));
+    nuevo->dato = valor;
+    nuevo->siguiente = NULL;
+    nuevo->anterior = NULL;
+    return nuevo;
+}
+```
+
 ### Insertar al INICIO
 
 ```c
 struct NodoD* insertarInicio(struct NodoD *lista, int valor)
 {
-    struct NodoD *nuevo = (struct NodoD*) malloc(sizeof(struct NodoD));
-    nuevo->dato = valor;
+    struct NodoD *nuevo = crearNodoD(valor);
     nuevo->siguiente = lista;
-    nuevo->anterior = NULL;
 
     if(lista != NULL)
-        lista->anterior = nuevo;  // el viejo inicio apunta para atras al nuevo
+        lista->anterior = nuevo;
 
     return nuevo;
 }
@@ -547,15 +656,10 @@ struct NodoD* insertarInicio(struct NodoD *lista, int valor)
 ```c
 struct NodoD* insertarFinal(struct NodoD *lista, int valor)
 {
-    struct NodoD *nuevo = (struct NodoD*) malloc(sizeof(struct NodoD));
-    nuevo->dato = valor;
-    nuevo->siguiente = NULL;
+    struct NodoD *nuevo = crearNodoD(valor);
 
     if(lista == NULL)
-    {
-        nuevo->anterior = NULL;
         return nuevo;
-    }
 
     struct NodoD *aux = lista;
     while(aux->siguiente != NULL)
@@ -583,19 +687,17 @@ void mostrarAdelante(struct NodoD *lista)
 }
 ```
 
-### Mostrar hacia atrás (desde el final)
+### Mostrar hacia atrás
 
 ```c
 void mostrarAtras(struct NodoD *lista)
 {
     if(lista == NULL) return;
 
-    // Ir al ultimo
     struct NodoD *aux = lista;
     while(aux->siguiente != NULL)
         aux = aux->siguiente;
 
-    // Recorrer hacia atras
     while(aux != NULL)
     {
         printf("%d <-> ", aux->dato);
@@ -605,7 +707,7 @@ void mostrarAtras(struct NodoD *lista)
 }
 ```
 
-### Eliminar un valor (doble)
+### Eliminar un valor
 
 ```c
 struct NodoD* eliminar(struct NodoD *lista, int valor)
@@ -613,12 +715,10 @@ struct NodoD* eliminar(struct NodoD *lista, int valor)
     if(lista == NULL) return NULL;
 
     struct NodoD *aux = lista;
-
-    // Buscar el nodo
     while(aux != NULL && aux->dato != valor)
         aux = aux->siguiente;
 
-    if(aux == NULL) return lista;  // no estaba
+    if(aux == NULL) return lista;
 
     // Caso: es el primero
     if(aux == lista)
@@ -630,7 +730,6 @@ struct NodoD* eliminar(struct NodoD *lista, int valor)
         return lista;
     }
 
-    // Reconectar: el anterior apunta al siguiente, el siguiente al anterior
     aux->anterior->siguiente = aux->siguiente;
     if(aux->siguiente != NULL)
         aux->siguiente->anterior = aux->anterior;
@@ -642,134 +741,390 @@ struct NodoD* eliminar(struct NodoD *lista, int valor)
 
 ---
 
-## 11. Árboles binarios
+## 13. Pilas (LIFO)
 
-**Concepto:** Cada nodo tiene un dato y hasta DOS hijos: izquierdo y derecho.
+**LIFO = Last In, First Out.** El último que entra es el primero que sale.
+Pensalo como una pila de platos: agregás y sacás siempre desde **arriba** (el tope).
 
-**BST/ABB (Árbol Binario de Búsqueda):** Los menores van a la izquierda, los mayores a la derecha.
+### Nodo de la pila
+
+```c
+struct Nodo
+{
+    int dato;
+    struct Nodo *siguiente;
+};
+```
+
+### Variable principal
+
+```c
+struct Nodo *tope = NULL;   // si es NULL, la pila esta vacia
+```
+
+### PUSH (insertar)
+
+```c
+void push(struct Nodo **tope, int valor)
+{
+    struct Nodo *nuevo = (struct Nodo*) malloc(sizeof(struct Nodo));
+    nuevo->dato = valor;
+    nuevo->siguiente = *tope;   // el nuevo apunta al tope actual
+    *tope = nuevo;              // el nuevo es el nuevo tope
+}
+
+// Uso: push(&tope, 10);
+```
+
+### POP (extraer)
+
+```c
+int pop(struct Nodo **tope)
+{
+    if(*tope == NULL)
+        return -1;   // pila vacia
+
+    struct Nodo *temp = *tope;
+    int valor = temp->dato;
+    *tope = (*tope)->siguiente;   // el tope avanza hacia abajo
+    free(temp);
+    return valor;
+}
+```
+
+### Recorrer
+
+```c
+void recorrerPila(struct Nodo *tope)
+{
+    struct Nodo *actual = tope;
+    while(actual != NULL)
+    {
+        printf("%d\n", actual->dato);
+        actual = actual->siguiente;
+    }
+}
+```
+
+### Buscar
+
+```c
+int buscarEnPila(struct Nodo *tope, int buscado)
+{
+    struct Nodo *actual = tope;
+    while(actual != NULL)
+    {
+        if(actual->dato == buscado)
+            return 1;
+        actual = actual->siguiente;
+    }
+    return 0;
+}
+```
+
+### Main de ejemplo
+
+```c
+int main()
+{
+    struct Nodo *tope = NULL;
+
+    push(&tope, 10);
+    push(&tope, 20);
+    push(&tope, 30);
+
+    printf("Pila:\n");
+    recorrerPila(tope);   // 30, 20, 10 (el ultimo entra primero)
+
+    int extraido = pop(&tope);
+    printf("Extraido: %d\n", extraido);   // 30
+
+    return 0;
+}
+```
+
+**Ojo con `**tope`:** se usa doble puntero porque la función necesita modificar el puntero original (no solo el dato). Por eso al llamarla se pasa `&tope`.
+
+---
+
+## 14. Colas (FIFO)
+
+**FIFO = First In, First Out.** El primero que entra es el primero que sale.
+Pensalo como una fila del supermercado: entrás por el **final**, salís por el **frente**.
+
+### Nodo de la cola
+
+```c
+struct Nodo
+{
+    int dato;
+    struct Nodo *siguiente;
+};
+```
+
+### Variables principales
+
+```c
+struct Nodo *frente = NULL;   // primer nodo
+struct Nodo *final = NULL;    // ultimo nodo
+// Si ambos son NULL, la cola esta vacia
+```
+
+### ENCOLAR (insertar al final)
+
+```c
+void encolar(struct Nodo **frente, struct Nodo **final, int valor)
+{
+    struct Nodo *nuevo = (struct Nodo*) malloc(sizeof(struct Nodo));
+    nuevo->dato = valor;
+    nuevo->siguiente = NULL;
+
+    if(*final == NULL)   // cola vacia
+    {
+        *frente = nuevo;
+        *final = nuevo;
+    }
+    else
+    {
+        (*final)->siguiente = nuevo;   // el ultimo apunta al nuevo
+        *final = nuevo;                // el nuevo es el nuevo final
+    }
+}
+```
+
+### DESENCOLAR (extraer del frente)
+
+```c
+int desencolar(struct Nodo **frente, struct Nodo **final)
+{
+    if(*frente == NULL)
+        return -1;   // cola vacia
+
+    struct Nodo *temp = *frente;
+    int valor = temp->dato;
+    *frente = (*frente)->siguiente;   // el frente avanza
+
+    if(*frente == NULL)
+        *final = NULL;   // si quedo vacia, actualizo el final tambien
+
+    free(temp);
+    return valor;
+}
+```
+
+### Recorrer
+
+```c
+void recorrerCola(struct Nodo *frente)
+{
+    struct Nodo *actual = frente;
+    while(actual != NULL)
+    {
+        printf("%d\n", actual->dato);
+        actual = actual->siguiente;
+    }
+}
+```
+
+### Buscar
+
+```c
+int buscarEnCola(struct Nodo *frente, int buscado)
+{
+    struct Nodo *actual = frente;
+    while(actual != NULL)
+    {
+        if(actual->dato == buscado)
+            return 1;
+        actual = actual->siguiente;
+    }
+    return 0;
+}
+```
+
+### Main de ejemplo
+
+```c
+int main()
+{
+    struct Nodo *frente = NULL;
+    struct Nodo *final = NULL;
+
+    encolar(&frente, &final, 10);
+    encolar(&frente, &final, 20);
+    encolar(&frente, &final, 30);
+
+    printf("Cola:\n");
+    recorrerCola(frente);   // 10, 20, 30 (en orden de llegada)
+
+    int extraido = desencolar(&frente, &final);
+    printf("Extraido: %d\n", extraido);   // 10 (el primero que entro)
+
+    return 0;
+}
+```
+
+### 📋 Pila vs Cola
+
+| | Pila (LIFO) | Cola (FIFO) |
+|---|---|---|
+| Insertar | `push` (al tope) | `encolar` (al final) |
+| Extraer | `pop` (del tope) | `desencolar` (del frente) |
+| Punteros | 1 (tope) | 2 (frente y final) |
+| Analogía | Pila de platos | Fila del supermercado |
+
+---
+
+## 15. Árboles binarios
+
+> **Estilo de cátedra:** campos `izquierdo` y `derecho`, función auxiliar `crearNodo`, búsqueda devuelve puntero al nodo.
+
+### Anatomía del árbol
+
+```
+       [ Raíz: 50 ]
+       /          \
+  [ 30 ]          [ 70 ]
+  /    \          /    \
+[20]  [40]      [60]  [80]   <-- hojas (sin hijos)
+```
+
+- **Raíz**: nodo superior, sin padre.
+- **Hijo**: nodo que cuelga de otro (en binario, máximo 2: izquierdo y derecho).
+- **Padre**: nodo del que cuelga otro.
+- **Hoja**: nodo sin hijos.
+- **Subárbol**: cada hijo es a su vez una raíz de su propio árbol → recursividad.
+
+### Regla del BST
+
+Para cualquier nodo:
+- Subárbol **izquierdo** = valores **menores**
+- Subárbol **derecho** = valores **mayores**
 
 ### Definición del nodo
 
 ```c
-struct NodoA
+struct Nodo
 {
     int dato;
-    struct NodoA *izq;
-    struct NodoA *der;
+    struct Nodo *izquierdo;
+    struct Nodo *derecho;
 };
+```
+
+### Crear nodo (auxiliar)
+
+```c
+struct Nodo* crearNodo(int valor)
+{
+    struct Nodo *nuevoNodo = (struct Nodo*) malloc(sizeof(struct Nodo));
+    nuevoNodo->dato = valor;
+    nuevoNodo->izquierdo = NULL;
+    nuevoNodo->derecho = NULL;
+    return nuevoNodo;
+}
 ```
 
 ### Insertar (recursivo)
 
 ```c
-struct NodoA* insertar(struct NodoA *raiz, int valor)
+struct Nodo* insertar(struct Nodo *raiz, int valor)
 {
-    // Caso base: si el lugar esta vacio, crear nodo aca
     if(raiz == NULL)
-    {
-        struct NodoA *nuevo = (struct NodoA*) malloc(sizeof(struct NodoA));
-        nuevo->dato = valor;
-        nuevo->izq = NULL;
-        nuevo->der = NULL;
-        return nuevo;
-    }
+        return crearNodo(valor);
 
-    // Si es menor, va a la izquierda
     if(valor < raiz->dato)
-        raiz->izq = insertar(raiz->izq, valor);
-    // Si es mayor, va a la derecha
+        raiz->izquierdo = insertar(raiz->izquierdo, valor);
     else if(valor > raiz->dato)
-        raiz->der = insertar(raiz->der, valor);
+        raiz->derecho = insertar(raiz->derecho, valor);
 
     return raiz;
 }
 ```
 
-### Recorridos (los 3 son recursivos)
-
-**PREORDEN:** raíz → izquierda → derecha
+### Buscar (devuelve puntero al nodo o NULL)
 
 ```c
-void preorden(struct NodoA *raiz)
+struct Nodo* buscar(struct Nodo *raiz, int valorBuscado)
+{
+    if(raiz == NULL || raiz->dato == valorBuscado)
+        return raiz;
+
+    if(valorBuscado < raiz->dato)
+        return buscar(raiz->izquierdo, valorBuscado);
+
+    return buscar(raiz->derecho, valorBuscado);
+}
+```
+
+### Recorridos
+
+**Truco:** la palabra (**PRE**/**IN**/**POST**) indica dónde está la **RAÍZ** en el recorrido.
+
+**PREORDEN:** raíz → izq → der
+
+```c
+void preorden(struct Nodo *raiz)
 {
     if(raiz != NULL)
     {
-        printf("%d ", raiz->dato);      // 1. raiz
-        preorden(raiz->izq);            // 2. izquierda
-        preorden(raiz->der);            // 3. derecha
+        printf("%d ", raiz->dato);
+        preorden(raiz->izquierdo);
+        preorden(raiz->derecho);
     }
 }
 ```
 
-**INORDEN:** izquierda → raíz → derecha (devuelve ordenado en un BST)
+**INORDEN:** izq → raíz → der
+> 🎯 **En un BST, inorden devuelve los valores ORDENADOS de menor a mayor.**
 
 ```c
-void inorden(struct NodoA *raiz)
+void inorden(struct Nodo *raiz)
 {
     if(raiz != NULL)
     {
-        inorden(raiz->izq);             // 1. izquierda
-        printf("%d ", raiz->dato);      // 2. raiz
-        inorden(raiz->der);             // 3. derecha
+        inorden(raiz->izquierdo);
+        printf("%d ", raiz->dato);
+        inorden(raiz->derecho);
     }
 }
 ```
 
-**POSTORDEN:** izquierda → derecha → raíz
+**POSTORDEN:** izq → der → raíz
 
 ```c
-void postorden(struct NodoA *raiz)
+void postorden(struct Nodo *raiz)
 {
     if(raiz != NULL)
     {
-        postorden(raiz->izq);           // 1. izquierda
-        postorden(raiz->der);           // 2. derecha
-        printf("%d ", raiz->dato);      // 3. raiz
+        postorden(raiz->izquierdo);
+        postorden(raiz->derecho);
+        printf("%d ", raiz->dato);
     }
-}
-```
-
-**Truco para recordar:** la palabra (PRE/IN/POST) indica dónde se ubica la RAÍZ en el recorrido.
-
-### Buscar en BST
-
-```c
-int buscar(struct NodoA *raiz, int valor)
-{
-    if(raiz == NULL)
-        return 0;  // no encontrado
-
-    if(raiz->dato == valor)
-        return 1;  // encontrado
-
-    if(valor < raiz->dato)
-        return buscar(raiz->izq, valor);
-    else
-        return buscar(raiz->der, valor);
 }
 ```
 
 ### Contar nodos
 
 ```c
-int contarNodos(struct NodoA *raiz)
+int contarNodos(struct Nodo *raiz)
 {
     if(raiz == NULL)
         return 0;
-    return 1 + contarNodos(raiz->izq) + contarNodos(raiz->der);
+    return 1 + contarNodos(raiz->izquierdo) + contarNodos(raiz->derecho);
 }
 ```
 
 ### Altura del árbol
 
 ```c
-int altura(struct NodoA *raiz)
+int altura(struct Nodo *raiz)
 {
     if(raiz == NULL)
         return 0;
 
-    int altIzq = altura(raiz->izq);
-    int altDer = altura(raiz->der);
+    int altIzq = altura(raiz->izquierdo);
+    int altDer = altura(raiz->derecho);
 
     if(altIzq > altDer)
         return 1 + altIzq;
@@ -783,7 +1138,7 @@ int altura(struct NodoA *raiz)
 ```c
 int main()
 {
-    struct NodoA *raiz = NULL;
+    struct Nodo *raiz = NULL;
 
     raiz = insertar(raiz, 50);
     raiz = insertar(raiz, 30);
@@ -793,12 +1148,15 @@ int main()
     raiz = insertar(raiz, 60);
     raiz = insertar(raiz, 80);
 
-    printf("Preorden: ");  preorden(raiz);   // 50 30 20 40 70 60 80
-    printf("\nInorden: ");  inorden(raiz);   // 20 30 40 50 60 70 80 (ordenado!)
-    printf("\nPostorden: "); postorden(raiz); // 20 40 30 60 80 70 50
+    printf("Preorden: ");  preorden(raiz);   printf("\n");
+    printf("Inorden: ");   inorden(raiz);    printf("\n");
+    printf("Postorden: "); postorden(raiz);  printf("\n");
 
-    printf("\nNodos: %d", contarNodos(raiz));
-    printf("\nAltura: %d", altura(raiz));
+    struct Nodo *encontrado = buscar(raiz, 40);
+    if(encontrado != NULL)
+        printf("Encontrado\n");
+    else
+        printf("No encontrado\n");
 
     getch();
     return 0;
@@ -807,32 +1165,25 @@ int main()
 
 ---
 
-## 12. Plantilla base
-
-Para arrancar cualquier programa:
+## 16. Plantilla base
 
 ```c
 #include <stdio.h>
 #include <conio.h>
-#include <stdlib.h>   // para malloc, free (listas y arboles)
+#include <stdlib.h>   // para malloc, free (listas, pilas, colas, arboles)
 #include <string.h>   // para strcpy, strlen, strcmp (cadenas)
 
 #define TAM 5
 
 // === STRUCTS aca arriba ===
-// struct Nodo { ... };
 
 // === FUNCIONES aca ===
-// tipo nombre(parametros) { ... }
 
 int main()
 {
     // declaracion de variables
-
     // carga de datos
-
     // procesamiento
-
     // mostrar resultados
 
     getch();
@@ -858,4 +1209,5 @@ int main()
 - [ ] Inicializar contadores y acumuladores en 0
 - [ ] Inicializar `posicion` en -1 en búsquedas
 - [ ] Punteros a struct usan `->`, no `.`
+- [ ] Pilas/colas: pasar punteros dobles (`**`) y al llamar usar `&`
 - [ ] `getch();` y `return 0;` al final del main
